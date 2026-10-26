@@ -1,0 +1,87 @@
+[app]
+name = "CAGCC"
+slug = "cagcc"
+bundle_id = "com.fathforce.cagcc"
+version = "0.1.0"
+accent_color = "emerald"
+error_prefix = "GCC"
+description = "Sovereign Executive Cockpit & Global Command Center"
+brand = "Fathforce"
+website = "https://gcc.fathforce.com"
+
+[window]
+title = "CAGCC — Global Command Center"
+width = 1320
+height = 880
+min_width = 900
+min_height = 600
+
+[security]
+master_password_required = true
+profile_pin_enabled = true
+
+[modules]
+sample_slice_enabled = false
+ai_assistant_enabled = true
+pro_licensing_enabled = true
+updater_enabled = true
+crash_reporting_enabled = true
+backup_restore_enabled = true
+
+[roles]
+default_role = "owner"
+allowed_roles = ["owner", "partner", "member"]
+
+[[menus]]
+key = "dashboard"
+label = "Dashboard"
+href = "/dashboard"
+icon = "dashboard"
+description = "Executive overview, revenue metrics, and node status"
+
+[[menus]]
+key = "finance"
+label = "Finance & Invoices"
+href = "/finance"
+icon = "cash"
+description = "Receivables, invoices, payment history, and revenue"
+
+[[menus]]
+key = "projects"
+label = "Projects"
+href = "/projects"
+icon = "tasks"
+description = "Client projects, roadmap, milestones, and deliverables"
+
+[[menus]]
+key = "clients"
+label = "Clients"
+href = "/clients"
+icon = "teams"
+description = "Client directory, accounts, and engagement history"
+
+[[menus]]
+key = "fleet"
+label = "Fleet & Nodes"
+href = "/fleet"
+icon = "monitoring"
+description = "Server nodes, Dokploy, VPS, and service health checks"
+
+[[menus]]
+key = "settings"
+label = "Settings & Sync"
+href = "/settings"
+icon = "security"
+description = "Cloud sync with gcc.fathforce.com, encryption vault, and profile"
+
+[billing]
+enabled = true
+product_code = "CAGCC"
+gcc_base_url = "https://gcc.fathforce.com"
+offline_days = 14
+refresh_hours = 6
+currencies = ["IDR", "USD"]
+
+[[billing.public_keys]]
+kid = "gcc-2026-10"
+ed25519 = "Su0nese5LuWHeNPFIz69p0HGUsdT49rnEn82fbtY2S8="
