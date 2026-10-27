@@ -1,6 +1,8 @@
 //! Privacy redactor & secret scrubber for AI prompts and terminal output.
 //! Redacts private SSH keys, bearer tokens, JWTs, AWS credentials, CLI passwords, and ANSI codes.
 
+#![allow(clippy::expect_used)]
+
 use regex::Regex;
 use std::sync::LazyLock;
 
