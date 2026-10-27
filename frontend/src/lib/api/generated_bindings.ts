@@ -21,6 +21,14 @@ export async function invoke_isVaultInitialized(): Promise<boolean> {
   return invoke('is_vault_initialized');
 }
 
+export async function invoke_isVaultUnlocked(): Promise<boolean> {
+  return invoke('is_vault_unlocked');
+}
+
+export async function invoke_autoUnlockVault(): Promise<boolean> {
+  return invoke('auto_unlock_vault');
+}
+
 export async function invoke_validateVaultPassword(password: string): Promise<boolean> {
   return invoke('validate_vault_password', { password: password });
 }

@@ -41,7 +41,7 @@ description = "Executive overview, revenue metrics, and node status"
 
 [[menus]]
 key = "finance"
-label = "Finance & Invoices"
+label = "Finance"
 href = "/finance"
 icon = "cash"
 description = "Receivables, invoices, payment history, and revenue"
@@ -52,6 +52,20 @@ label = "Projects"
 href = "/projects"
 icon = "tasks"
 description = "Client projects, roadmap, milestones, and deliverables"
+
+[[menus]]
+key = "website"
+label = "Website"
+href = "/website"
+icon = "landing"
+description = "Website status, portal monitoring, and domain management"
+
+[[menus]]
+key = "content"
+label = "Content"
+href = "/content"
+icon = "blog"
+description = "Articles, documentation, and public assets overview"
 
 [[menus]]
 key = "clients"
