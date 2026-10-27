@@ -6,7 +6,7 @@ import { version } from '../../package.json';
 export const APP_VERSION: string = version;
 export const APP_NAME = 'CAGCC';
 export const REPO_URL = 'https://github.com/cecepazhar/caterm';
-export const WEBSITE_URL = 'https://caterm.fathforce.com';
+export const WEBSITE_URL = 'https://gcc.fathforce.com';
 export const AUTHOR_URL = 'https://cecepazhar.com';
 export const PRICING_URL = `${WEBSITE_URL}/#pricing`;
 export const GITHUB_SPONSORS_URL = 'https://github.com/sponsors/cecepazhar';
@@ -16,7 +16,7 @@ export const KOFI_URL = 'https://ko-fi.com/cecepazhar';
 export const PAYPAL_URL = 'https://paypal.me/cecepazhar';
 
 /**
- * Pricing page for the signed-in CATerm account: the landing page passes the account id on to
+ * Pricing page for the signed-in GCC account: the landing page passes the account id on to
  * Lemon Squeezy as checkout custom data, so the subscription lands on this account whatever email
  * is typed at checkout. Only the opaque account id travels, never the email.
  */

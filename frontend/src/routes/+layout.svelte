@@ -1,6 +1,6 @@
 <script lang="ts">
   import "../app.css";
-  import LockScreen from '$lib/components/LockScreen.svelte';
+  import GccLoginScreen from '$lib/components/GccLoginScreen.svelte';
   import NotificationCenter from '$lib/components/NotificationCenter.svelte';
   import AiChatPanel from '$lib/components/AiChatPanel.svelte';
   import { getAiChatState, toggleAiChat, closeAiChat } from '$lib/stores/aiChat.svelte';
@@ -76,13 +76,29 @@
 
   onMount(() => {
     initTheme();
-    invoke<boolean>('is_vault_unlocked')
-      .then((unlocked) => {
-        isVaultUnlocked = unlocked;
-      })
-      .catch(() => {
-        isVaultUnlocked = false;
-      });
+
+    // Check for persistent saved session
+    const storedSession = localStorage.getItem('cagcc_session') || sessionStorage.getItem('cagcc_session');
+    if (storedSession) {
+      // Auto-unlock the vault from the local secure key
+      invoke('auto_unlock_vault')
+        .then((unlocked) => {
+          isVaultUnlocked = unlocked;
+        })
+        .catch(() => {
+          // If auto-unlock fails, fall back to showing login screen
+          isVaultUnlocked = false;
+        });
+    } else {
+      // No saved session — check vault state or keep locked for login screen
+      invoke<boolean>('is_vault_unlocked')
+        .then((unlocked) => {
+          isVaultUnlocked = unlocked;
+        })
+        .catch(() => {
+          isVaultUnlocked = false;
+        });
+    }
 
     getPendingCrashReport()
       .then((report) => {
@@ -94,6 +110,9 @@
   });
 
   async function handleLock() {
+    // Manual logout removes persistent session completely
+    localStorage.removeItem('cagcc_session');
+    sessionStorage.removeItem('cagcc_session');
     await lockVault();
     isVaultUnlocked = false;
   }
@@ -137,7 +156,7 @@
 {/if}
 
 {#if !isVaultUnlocked}
-  <LockScreen onUnlocked={() => (isVaultUnlocked = true)} />
+  <GccLoginScreen onUnlocked={() => (isVaultUnlocked = true)} />
 {:else}
   <!-- Shell: Unified seamless background (Title bar and sidebar share the background with no dividing line cut) -->
   <div class="flex flex-col h-screen bg-neutral-100 dark:bg-[#0e0e0e] text-neutral-800 dark:text-neutral-300 font-sans transition-colors duration-150 pb-[env(safe-area-inset-bottom,0px)] select-none">

@@ -56,6 +56,20 @@ pub async fn is_vault_initialized() -> Result<bool, CafError> {
 }
 
 #[tauri::command]
+pub async fn is_vault_unlocked() -> Result<bool, CafError> {
+    run_blocking(vault::is_unlocked).await
+}
+
+#[tauri::command]
+pub async fn auto_unlock_vault() -> Result<bool, CafError> {
+    run_blocking(move || {
+        let _ = vault::ensure_unlocked_key()?;
+        let _ = caf_core::db::open()?;
+        Ok(true)
+    }).await
+}
+
+#[tauri::command]
 pub async fn validate_vault_password(password: String) -> Result<bool, CafError> {
     run_blocking(move || vault::validate_password(&password)).await
 }
