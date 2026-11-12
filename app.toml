@@ -91,7 +91,7 @@ description = "Cloud sync with gcc.fathforce.com, encryption vault, and profile"
 [billing]
 enabled = true
 product_code = "CAGCC"
-gcc_base_url = "https://gcc.fathforce.com"
+gcc_base_url = "https://api.fathforce.com"
 offline_days = 14
 refresh_hours = 6
 currencies = ["IDR", "USD"]
