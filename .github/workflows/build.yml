@@ -1,0 +1,139 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file
+          sudo apt-get install -y libssl-dev libayatana-appindicator3-dev librsvg2-dev rpm alien
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+      - name: Build Linux
+        working-directory: crates/caf-app
+        env:
+          OPENSSL_NO_VENDOR: "1"
+        run: npx @tauri-apps/cli build
+      - name: Repair RPM icons
+        run: |
+          mkdir -p target/release/bundle/rpm-repaired
+          for deb in target/release/bundle/deb/*.deb; do
+            [ -e "$deb" ] && alien --to-rpm --scripts -k "$(basename $deb)" || true
+          done
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cagcc-linux
+          path: |
+            target/release/bundle/deb/*.deb
+            target/release/bundle/rpm-repaired/*.rpm
+            target/release/bundle/appimage/*.AppImage
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust (MSVC)
+        uses: dtolnay/rust-toolchain@stable
+      - name: Add Rust MSVC target
+        run: rustup target add x86_64-pc-windows-msvc
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+      - name: Build Windows
+        working-directory: crates/caf-app
+        run: npx @tauri-apps/cli build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cagcc-windows
+          path: target/release/bundle/msi/*.msi
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+      - name: Build macOS
+        working-directory: crates/caf-app
+        run: npx @tauri-apps/cli build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cagcc-macos
+          path: target/release/bundle/dmg/*.dmg
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file
+          sudo apt-get install -y libssl-dev libayatana-appindicator3-dev librsvg2-dev
+          sudo apt-get install -y openjdk-21-jdk
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Add Android target
+        run: |
+          rustup target add aarch64-linux-android
+          rustup target add x86_64-linux-android
+      - name: Setup Android SDK
+        uses: android/setup-android@v2
+        with:
+          sdk-channel: 3
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+      - name: Build Android APK
+        working-directory: crates/caf-app
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
+          NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
+          OPENSSL_NO_VENDOR: "1"
+        run: |
+          npx @tauri-apps/cli android build --target aarch64 --debug
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: cagcc-android
+          path: gen/android/app/build/outputs/apk/**/*.apk
